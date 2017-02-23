@@ -1,4 +1,15 @@
-# vn.py - 基于python的开源交易平台开发框架
+# PyTrader, a fork of vn.py
+
+* 转换成了 Python 3 的格式
+
+### How to use
+
+1. 安装 Python 3
+2. 从 [这里] (http://www.lfd.uci.edu/~gohlke/pythonlibs/) 下载所需包（PyQt4 等），并安装
+3. pip install psutil
+
+原 README：
+---
 
 ### 项目捐赠
 

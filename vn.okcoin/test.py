@@ -44,4 +44,4 @@ api.subscribeSpotDepth(SYMBOL_BTC, DEPTH_20)
 #api.futureCancelOrder(symbol, expiry, orderid)
 #api.futureOrderInfo(symbol, expiry, orderid, status, page, length)
 
-raw_input()
+input()

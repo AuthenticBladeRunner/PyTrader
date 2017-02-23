@@ -36,14 +36,14 @@ class MainWindow(QtGui.QMainWindow):
     #----------------------------------------------------------------------
     def initCentral(self):
         """初始化中心区域"""
-        widgetMarketM, dockMarketM = self.createDock(MarketMonitor, u'行情', QtCore.Qt.RightDockWidgetArea)
-        widgetLogM, dockLogM = self.createDock(LogMonitor, u'日志', QtCore.Qt.BottomDockWidgetArea)
-        widgetErrorM, dockErrorM = self.createDock(ErrorMonitor, u'错误', QtCore.Qt.BottomDockWidgetArea)
-        widgetTradeM, dockTradeM = self.createDock(TradeMonitor, u'成交', QtCore.Qt.BottomDockWidgetArea)
-        widgetOrderM, dockOrderM = self.createDock(OrderMonitor, u'委托', QtCore.Qt.RightDockWidgetArea)
-        widgetPositionM, dockPositionM = self.createDock(PositionMonitor, u'持仓', QtCore.Qt.BottomDockWidgetArea)
-        widgetAccountM, dockAccountM = self.createDock(AccountMonitor, u'资金', QtCore.Qt.BottomDockWidgetArea)
-        widgetTradingW, dockTradingW = self.createDock(TradingWidget, u'交易', QtCore.Qt.LeftDockWidgetArea)
+        widgetMarketM, dockMarketM = self.createDock(MarketMonitor, '行情', QtCore.Qt.RightDockWidgetArea)
+        widgetLogM, dockLogM = self.createDock(LogMonitor, '日志', QtCore.Qt.BottomDockWidgetArea)
+        widgetErrorM, dockErrorM = self.createDock(ErrorMonitor, '错误', QtCore.Qt.BottomDockWidgetArea)
+        widgetTradeM, dockTradeM = self.createDock(TradeMonitor, '成交', QtCore.Qt.BottomDockWidgetArea)
+        widgetOrderM, dockOrderM = self.createDock(OrderMonitor, '委托', QtCore.Qt.RightDockWidgetArea)
+        widgetPositionM, dockPositionM = self.createDock(PositionMonitor, '持仓', QtCore.Qt.BottomDockWidgetArea)
+        widgetAccountM, dockAccountM = self.createDock(AccountMonitor, '资金', QtCore.Qt.BottomDockWidgetArea)
+        widgetTradingW, dockTradingW = self.createDock(TradingWidget, '交易', QtCore.Qt.LeftDockWidgetArea)
     
         self.tabifyDockWidget(dockTradeM, dockErrorM)
         self.tabifyDockWidget(dockTradeM, dockLogM)
@@ -65,43 +65,43 @@ class MainWindow(QtGui.QMainWindow):
         menubar = self.menuBar()
         
         # 设计为只显示存在的接口
-        sysMenu = menubar.addMenu(u'系统')
+        sysMenu = menubar.addMenu('系统')
         self.addConnectAction(sysMenu, 'CTP')
         self.addConnectAction(sysMenu, 'LTS')
         self.addConnectAction(sysMenu, 'XTP')
-        self.addConnectAction(sysMenu, 'FEMAS', u'飞马')
-        self.addConnectAction(sysMenu, 'XSPEED', u'飞创')
+        self.addConnectAction(sysMenu, 'FEMAS', '飞马')
+        self.addConnectAction(sysMenu, 'XSPEED', '飞创')
         self.addConnectAction(sysMenu, 'QDP')
-        self.addConnectAction(sysMenu, 'KSOTP', u'金仕达期权')
-        self.addConnectAction(sysMenu, 'KSGOLD', u'金仕达黄金')
-        self.addConnectAction(sysMenu, 'SGIT', u'飞鼠')
+        self.addConnectAction(sysMenu, 'KSOTP', '金仕达期权')
+        self.addConnectAction(sysMenu, 'KSGOLD', '金仕达黄金')
+        self.addConnectAction(sysMenu, 'SGIT', '飞鼠')
         sysMenu.addSeparator()
         self.addConnectAction(sysMenu, 'IB')
-        self.addConnectAction(sysMenu, 'SHZD', u'直达')
+        self.addConnectAction(sysMenu, 'SHZD', '直达')
         self.addConnectAction(sysMenu, 'OANDA')
         self.addConnectAction(sysMenu, 'OKCOIN')     
         sysMenu.addSeparator()
         self.addConnectAction(sysMenu, 'Wind')
         
         sysMenu.addSeparator()
-        sysMenu.addAction(self.createAction(u'连接数据库', self.mainEngine.dbConnect))
+        sysMenu.addAction(self.createAction('连接数据库', self.mainEngine.dbConnect))
         sysMenu.addSeparator()
-        sysMenu.addAction(self.createAction(u'退出', self.close))
+        sysMenu.addAction(self.createAction('退出', self.close))
         
-        functionMenu = menubar.addMenu(u'功能')
-        functionMenu.addAction(self.createAction(u'查询合约', self.openContract))
-        functionMenu.addAction(self.createAction(u'行情记录', self.openDr))
-        functionMenu.addAction(self.createAction(u'风控管理', self.openRm))
+        functionMenu = menubar.addMenu('功能')
+        functionMenu.addAction(self.createAction('查询合约', self.openContract))
+        functionMenu.addAction(self.createAction('行情记录', self.openDr))
+        functionMenu.addAction(self.createAction('风控管理', self.openRm))
         
         # 算法相关
-        algoMenu = menubar.addMenu(u'算法')
-        algoMenu.addAction(self.createAction(u'CTA策略', self.openCta))
+        algoMenu = menubar.addMenu('算法')
+        algoMenu.addAction(self.createAction('CTA策略', self.openCta))
         
         # 帮助
-        helpMenu = menubar.addMenu(u'帮助')
-        helpMenu.addAction(self.createAction(u'还原', self.restoreWindow))
-        helpMenu.addAction(self.createAction(u'关于', self.openAbout))
-        helpMenu.addAction(self.createAction(u'测试', self.test))
+        helpMenu = menubar.addMenu('帮助')
+        helpMenu.addAction(self.createAction('还原', self.restoreWindow))
+        helpMenu.addAction(self.createAction('关于', self.openAbout))
+        helpMenu.addAction(self.createAction('测试', self.test))
     
     #----------------------------------------------------------------------
     def initStatusBar(self):
@@ -131,7 +131,7 @@ class MainWindow(QtGui.QMainWindow):
         """获取CPU和内存状态信息"""
         cpuPercent = psutil.cpu_percent()
         memoryPercent = psutil.virtual_memory().percent
-        return u'CPU使用率：%d%%   内存使用率：%d%%' % (cpuPercent, memoryPercent)        
+        return 'CPU使用率：%d%%   内存使用率：%d%%' % (cpuPercent, memoryPercent)        
         
     #----------------------------------------------------------------------
     def addConnectAction(self, menu, gatewayName, displayName=''):
@@ -144,7 +144,7 @@ class MainWindow(QtGui.QMainWindow):
         
         if not displayName:
             displayName = gatewayName
-        actionName = u'连接' + displayName
+        actionName = '连接' + displayName
         
         menu.addAction(self.createAction(actionName, connect))
         
@@ -209,12 +209,12 @@ class MainWindow(QtGui.QMainWindow):
     #----------------------------------------------------------------------
     def closeEvent(self, event):
         """关闭事件"""
-        reply = QtGui.QMessageBox.question(self, u'退出',
-                                           u'确认退出?', QtGui.QMessageBox.Yes | 
+        reply = QtGui.QMessageBox.question(self, '退出',
+                                           '确认退出?', QtGui.QMessageBox.Yes | 
                                            QtGui.QMessageBox.No, QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes: 
-            for widget in self.widgetDict.values():
+            for widget in list(self.widgetDict.values()):
                 widget.close()
             self.saveWindowSettings('custom')
             
@@ -278,9 +278,9 @@ class AboutWidget(QtGui.QDialog):
     #----------------------------------------------------------------------
     def initUi(self):
         """"""
-        self.setWindowTitle(u'关于VnTrader')
+        self.setWindowTitle('关于VnTrader')
 
-        text = u"""
+        text = """
             Developed by Traders, for Traders.
 
             License：MIT
