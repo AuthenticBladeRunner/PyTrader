@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+# set project name
 project(vn_ctp_api)
 
 # 设置使用的编译器
@@ -28,6 +29,8 @@ elseif (UNIX)
         set(CTPAPI_PATH ctpapi/x64_linux)
     endif()
 endif()
+
+# add to the search path for include files
 include_directories(${CTPAPI_PATH})
 set(CTPAPI_LIBRARY )
 find_library(CTPAPI_MD_LIBRARY
@@ -47,6 +50,7 @@ if (BUILD_CTP_MD)
   add_definitions(-DBUILD_CTP_MD)
   set(CTP_MD_PATH vnctpmd/vnctpmd)
   include_directories(CTP_MD_PATH)
+  # CMAKE_CURRENT_SOURCE_DIR is the directory where the currently processed CMakeLists.txt is located in
   set(VN_CTP_MD_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/vnctpmd/vnctpmd/vnctpmd.cpp)
   add_library(vnctpmd SHARED ${VN_CTP_MD_SOURCE})
 endif()
@@ -62,36 +66,42 @@ endif()
 # 设置Python所在的目录
 set(PYTHON_LIBRARY )
 if (WIN32)
-set(PYTHON_INCLUDE_PATH C:/Python27/include)
-find_library(PYTHON_LIBRARY
-  NAMES python27
-  PATHS C:/Python27/libs)
-include_directories(${PYTHON_INCLUDE_PATH})
+  set(PYTHON_INCLUDE_PATH D:/Python35/include)
+  find_library(PYTHON_LIBRARY
+    NAMES python35
+    PATHS D:/Python35/libs)
+  include_directories(${PYTHON_INCLUDE_PATH})
 else()
-set(PYTHON_INCLUDE_PATH /usr/include/python2.7/)
-find_library(PYTHON_LIBRARY
-  NAMES python2.7
-  PATHS /usr/lib/x86_64-linux-gnu)
-include_directories(${PYTHON_INCLUDE_PATH})
+  set(PYTHON_INCLUDE_PATH /usr/include/python3.5/)
+  find_library(PYTHON_LIBRARY
+    NAMES python3.5
+    PATHS /usr/lib/x86_64-linux-gnu)
+  include_directories(${PYTHON_INCLUDE_PATH})
 endif()
 
-# 链接boost库，anaconda
+# 设置boost库链接方式
 if (WIN32)
     set(Boost_USE_STATIC_LIBS        ON)    #链接boost静态库
 endif()
 set(Boost_USE_MULTITHREADED      ON)
-find_package(Boost 1.55.0 COMPONENTS python thread date_time system chrono REQUIRED) # 如果boost库没有完全编译，需要将编译的库明确地指出，否者message(${Boost_LIBRARIES})会出错
+
+# find_package(<package> [version] [EXACT] [QUIET] [MODULE] [REQUIRED] [[COMPONENTS] [components...]] [OPTIONAL_COMPONENTS components...] [NO_POLICY_SCOPE])
+# <package>_FOUND will be set to indicate whether the package was found.
+# The REQUIRED option stops processing with an error message if the package cannot be found.
+# A package-specific list of required components may be listed after the COMPONENTS option (or after the REQUIRED option if present).
+# This will invoke Find<package>.cmake in the CMAKE_MODULE_PATH. (e.g. D:\Program Files\CMake\share\cmake-3.8\Modules\FindBoost.cmake, which will look for environment variable BOOST_ROOT)
+find_package(Boost COMPONENTS python thread date_time system chrono REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-# 去掉生成的so文件名中前缀的lib
+# 去掉生成的库文件名中前缀的lib
 set_target_properties(vnctpmd PROPERTIES PREFIX "")
 
-# 链接生成.so文件
+# 链接生成库文件(.so/.dll)
 target_link_libraries(vnctpmd  ${Boost_LIBRARIES} ${PYTHON_LIBRARY} ${CTPAPI_MD_LIBRARY})
 
-# 将生成的dll文件后缀名修改为pyd（仅在windows下）
+# 将windows下生成的dll文件后缀名修改为pyd
 set(MD_DLL "${LIBRARY_OUTPUT_PATH}/Release/vnctpmd.dll")
 if (EXISTS ${MD_DLL})
   file(RENAME ${MD_DLL} ${LIBRARY_OUTPUT_PATH}/Release/vnctpmd.pyd)

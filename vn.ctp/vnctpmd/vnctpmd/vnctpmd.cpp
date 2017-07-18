@@ -742,6 +742,9 @@ int MdApi::reqUserLogout(dict req, int nRequestID)
 ///Boost.Python封装
 ///-------------------------------------------------------------------------------------
 
+// 使用 boost 提供的 wrapper 来使 virtual functions 正常工作
+// http://www.boost.org/doc/libs/1_63_0/libs/python/doc/html/tutorial/tutorial/exposing.html
+// 在 Python 中继承 MdApiWrap, 并override虚函数
 struct MdApiWrap : MdApi, wrapper < MdApi >
 {
 	virtual void onFrontConnected()
@@ -781,6 +784,7 @@ struct MdApiWrap : MdApi, wrapper < MdApi >
 		}
 	};
 
+	// 注意此处的函数参数类型和 CThostFtdcMdSpi 原始的参数类型是不一样的，而且第一个字母是小写，所以是不同的函数
 	virtual void onRspError(dict data, int id, bool last)
 	{
 		try
@@ -923,4 +927,5 @@ BOOST_PYTHON_MODULE(vnctpmd)
 		.def("onRspUnSubForQuoteRsp", pure_virtual(&MdApiWrap::onRspUnSubForQuoteRsp))
 		.def("onRtnForQuoteRsp", pure_virtual(&MdApiWrap::onRtnForQuoteRsp))
 		;
+		
 };

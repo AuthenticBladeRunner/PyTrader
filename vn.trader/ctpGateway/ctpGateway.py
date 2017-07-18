@@ -15,6 +15,8 @@ from datetime import datetime
 
 from .vnctpmd import MdApi
 from .vnctptd import TdApi
+#import vnctpmd
+#import vnctptd
 from .ctpDataType import *
 from vtGateway import *
 
@@ -99,7 +101,7 @@ class CtpGateway(VtGateway):
         fileName = os.path.join(path, fileName)
         
         try:
-            f = file(fileName)
+            f = open(fileName)
         except IOError:
             log = VtLogData()
             log.gatewayName = self.gatewayName
@@ -122,6 +124,7 @@ class CtpGateway(VtGateway):
             self.onLog(log)
             return            
         
+        print("Now connecting to CTP")
         # 创建行情和交易接口对象
         self.mdApi.connect(userID, password, brokerID, mdAddress)
         self.tdApi.connect(userID, password, brokerID, tdAddress)
@@ -186,7 +189,8 @@ class CtpGateway(VtGateway):
             
             # 执行查询函数
             function = self.qryFunctionList[self.qryNextFunction]
-            function()
+            print(function)
+            #function()
             
             # 计算下次查询函数的索引，如果超过了列表长度，则重新设为0
             self.qryNextFunction += 1
@@ -196,6 +200,7 @@ class CtpGateway(VtGateway):
     #----------------------------------------------------------------------
     def startQuery(self):
         """启动连续查询"""
+        # 每隔一段时间执行 self.query
         self.eventEngine.register(EVENT_TIMER, self.query)
     
     #----------------------------------------------------------------------
@@ -232,6 +237,7 @@ class CtpMdApi(MdApi):
     #----------------------------------------------------------------------
     def onFrontConnected(self):
         """服务器连接"""
+        print("CTP market server connected, now prepare to login")
         self.connectionStatus = True
         
         log = VtLogData()
@@ -256,6 +262,7 @@ class CtpMdApi(MdApi):
     def onHeartBeatWarning(self, n):
         """心跳报警"""
         # 因为API的心跳报警比较常被触发，且与API工作关系不大，因此选择忽略
+        print("heart beat {}".format(n))
         pass
     
     #----------------------------------------------------------------------   
@@ -270,6 +277,7 @@ class CtpMdApi(MdApi):
     #----------------------------------------------------------------------
     def onRspUserLogin(self, data, error, n, last):
         """登陆回报"""
+        print("Received login response from CTP market: {}".format(error))
         # 如果登录成功，推送日志信息
         if error['ErrorID'] == 0:
             self.loginStatus = True
@@ -280,9 +288,12 @@ class CtpMdApi(MdApi):
             log.logContent = '行情服务器登录完成'
             self.gateway.onLog(log)
             
+            print("Successfully logged on CTP market")
             # 重新订阅之前订阅的合约
             for subscribeReq in self.subscribedSymbols:
                 self.subscribe(subscribeReq)
+            
+            print("Subscribed {}".format(self.subscribedSymbols))
                 
         # 否则，推送错误信息
         else:
@@ -385,7 +396,7 @@ class CtpMdApi(MdApi):
         
         # 如果尚未建立服务器连接，则进行连接
         if not self.connectionStatus:
-            # 创建C++环境中的API对象，这里传入的参数是需要用来保存.con文件的文件夹路径
+            # 创建C++环境中的API对象，path 是用来保存.con文件的文件夹
             path = os.getcwd() + '/temp/' + self.gatewayName + '/'
             if not os.path.exists(path):
                 os.makedirs(path)
@@ -421,7 +432,7 @@ class CtpMdApi(MdApi):
             req['Password'] = self.password
             req['BrokerID'] = self.brokerID
             self.reqID += 1
-            self.reqUserLogin(req, self.reqID)    
+            self.reqUserLogin(req, self.reqID)
     
     #----------------------------------------------------------------------
     def close(self):
@@ -469,6 +480,7 @@ class CtpTdApi(TdApi):
         log.logContent = '交易服务器连接成功'
         self.gateway.onLog(log)
     
+        print("CTP trade server connected, now logging in...")
         self.login()
         
     #----------------------------------------------------------------------
@@ -496,6 +508,7 @@ class CtpTdApi(TdApi):
     #----------------------------------------------------------------------
     def onRspUserLogin(self, data, error, n, last):
         """登陆回报"""
+        print("Got login response from CTP trade interface")
         # 如果登录成功，推送日志信息
         if error['ErrorID'] == 0:
             self.frontID = str(data['FrontID'])
@@ -508,12 +521,14 @@ class CtpTdApi(TdApi):
             log.logContent = '交易服务器登录完成'
             self.gateway.onLog(log)
             
+            print("CTP trade server logged in")
+            
             # 确认结算信息
             req = {}
             req['BrokerID'] = self.brokerID
             req['InvestorID'] = self.userID
             self.reqID += 1
-            self.reqSettlementInfoConfirm(req, self.reqID)              
+            self.reqSettlementInfoConfirm(req, self.reqID)
                 
         # 否则，推送错误信息
         else:
@@ -1259,12 +1274,12 @@ class CtpTdApi(TdApi):
                 os.makedirs(path)
             self.createFtdcTraderApi(path)
             
+            # 注册服务器地址
+            self.registerFront(self.address)
+            
             # 设置数据同步模式为推送从今日开始所有数据
             self.subscribePrivateTopic(0)
             self.subscribePublicTopic(0)            
-            
-            # 注册服务器地址
-            self.registerFront(self.address)
             
             # 初始化连接，成功会调用onFrontConnected
             self.init()
@@ -1283,6 +1298,7 @@ class CtpTdApi(TdApi):
             req['UserID'] = self.userID
             req['Password'] = self.password
             req['BrokerID'] = self.brokerID
+            #print(req)
             self.reqID += 1
             self.reqUserLogin(req, self.reqID)   
         

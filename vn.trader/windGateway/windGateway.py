@@ -87,7 +87,7 @@ class WindGateway(VtGateway):
         """连接"""
         # 由于w.start方法会阻塞较长时间
         # 因此设计为异步模式，交给事件处理线程去处理
-        # 另外w.start和WingIDE的debug模块有冲突，会导致异常退出
+        # 但与此同时还要注意w.start和w.close/stop要使用同一线程处理，否则会报错
         event = Event(type_=EVENT_WIND_CONNECTREQ)
         self.eventEngine.put(event)
         
@@ -132,12 +132,15 @@ class WindGateway(VtGateway):
     #----------------------------------------------------------------------
     def close(self):
         #self.w.stop()
-        self.w.close()
+        #self.w.close()
+        event = Event(type_ = EVENT_WIND_STOPREQ)
+        self.eventEngine.put(event)
      
     #----------------------------------------------------------------------
     def registerEvent(self):
         """注册事件监听"""
         self.eventEngine.register(EVENT_WIND_CONNECTREQ, self.wConnect)
+        self.eventEngine.register(EVENT_WIND_STOPREQ, self.wStop)
         
     #----------------------------------------------------------------------
     def wsqCallBack(self, data):
@@ -173,7 +176,7 @@ class WindGateway(VtGateway):
     
     #----------------------------------------------------------------------
     def wConnect(self, event):
-        """利用事件处理线程去异步连接Wind接口"""
+        """事件管理器 的 事件处理线程 在遇到 相关事件时 会调用此函数 来初始化Wind接口"""
         result = self.w.start()
         
         log = VtLogData()
@@ -182,5 +185,11 @@ class WindGateway(VtGateway):
         if not result.ErrorCode:
             log.logContent = 'Wind接口连接成功'
         else:
-            log.logContent = 'Wind接口连接失败，错误代码%d' %result.ErrorCode
-        self.onLog(log) 
+            log.logContent = 'Wind接口连接失败，错误代码 {}'.format(result.ErrorCode)
+        self.onLog(log)
+    
+    #----------------------------------------------------------------------
+    def wStop(self, event):
+        self.w.stop()
+        print("Wind successfully closed")
+    

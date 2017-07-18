@@ -197,7 +197,7 @@ class EventEngine2(object):
         # 事件处理线程
         self.__thread = Thread(target = self.__run)
         
-        # 计时器，用于触发计时器事件
+        # 计时器事件线程，用于每隔一段时间往事件队列中插入计时器事件
         self.__timer = Thread(target = self.__runTimer)
         self.__timerActive = False                      # 计时器工作状态
         self.__timerSleep = 1                           # 计时器触发间隔（默认1秒）        
@@ -206,23 +206,27 @@ class EventEngine2(object):
         # 其中每个键对应的值是一个列表，列表中保存了对该事件进行监听的函数功能
         self.__handlers = defaultdict(list)
         
-        # __generalHandlers是一个列表，用来保存通用回调函数（所有事件均调用）
-        self.__generalHandlers = []        
+        # __generalHandlers: 通用事件处理函数列表（所有事件均会调用）
+        self.__generalHandlers = []
         
     #----------------------------------------------------------------------
     def __run(self):
-        """引擎运行"""
+        """事件处理线程"""
         while self.__active == True:
+            # https://docs.python.org/3.6/library/queue.html
+            event = self.__queue.get()  # By default it blocks until an item is available
+            self.__process(event)
+            '''
             try:
                 event = self.__queue.get(block = True, timeout = 1)  # 获取事件的阻塞时间设为1秒
                 self.__process(event)
             except Empty:
                 pass
-            
+            '''
     #----------------------------------------------------------------------
     def __process(self, event):
         """处理事件"""
-        # 检查是否存在对该事件进行监听的处理函数
+        # 检查是否存在对专门处理该事件的函数
         if event.type_ in self.__handlers:
             # 若存在，则按顺序将事件传递给处理函数执行
             [handler(event) for handler in self.__handlers[event.type_]]
@@ -237,7 +241,7 @@ class EventEngine2(object):
                
     #----------------------------------------------------------------------
     def __runTimer(self):
-        """运行在计时器线程中的循环函数"""
+        """每隔一段时间往事件队列中插入计时器事件"""
         while self.__timerActive:
             # 创建计时器事件
             event = Event(type_=EVENT_TIMER)

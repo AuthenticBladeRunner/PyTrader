@@ -1,7 +1,12 @@
 eclipse.preferences.version=1
+encoding//vn.how/tick2trade/vn.trader_t2t/eventType.py=UTF-8
+encoding//vn.trader/ctpGateway/ctpGateway.py=UTF-8
 encoding//vn.trader/eventEngine.py=UTF-8
+encoding//vn.trader/eventType.py=UTF-8
+encoding//vn.trader/uiBasicWidget.py=UTF-8
 encoding//vn.trader/uiMainWindow.py=UTF-8
 encoding//vn.trader/vtEngine.py=UTF-8
+encoding//vn.trader/vtGateway.py=UTF-8
 encoding//vn.trader/vtMain.py=UTF-8
 encoding//vn.trader/windGateway/windGateway.py=UTF-8
 encoding/<project>=UTF-8

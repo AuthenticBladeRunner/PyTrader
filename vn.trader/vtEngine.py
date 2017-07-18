@@ -26,7 +26,7 @@ class MainEngine(object):
         # 记录今日日期
         self.todayDate = datetime.now().strftime('%Y%m%d')
         
-        # 创建事件引擎
+        # 创建事件管理器
         self.eventEngine = EventEngine2()
         self.eventEngine.start()
         

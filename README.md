@@ -7,6 +7,7 @@
 1. 安装 Python 3
 2. 从 [这里] (http://www.lfd.uci.edu/~gohlke/pythonlibs/) 下载所需包（PyQt4 等），并安装
 3. pip install psutil
+4. 在[SimNow](http://simnow.com.cn/)注册CTP仿真账号，记下你的**账号、密码、经纪商编号**，然后[下载快期](http://simnow.com.cn/static/softwareOthersDownload.action)安装，在登录界面点击「测速和代理」查询你的**交易和行情服务器地址**
 
 原 README：
 ---

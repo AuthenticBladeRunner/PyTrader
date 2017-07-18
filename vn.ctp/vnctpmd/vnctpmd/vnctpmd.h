@@ -146,6 +146,8 @@ void getStr(dict d, string key, char* value);
 ///-------------------------------------------------------------------------------------
 
 //API的继承实现
+// 该类包装了 CTP 提供的 API 类 (用于向服务器发送命令) 和 SPI 类 (包含了处理服务器返回信息的回调函数)
+// 同时新定义了一些虚函数让Python继承（函数名和 SPI 类的虚函数相同 但 第一个字母小写）（因为原始的C++类型指针等参数无法被python使用，需要重新包装数据后再传给python）
 class MdApi : public CThostFtdcMdSpi
 {
 private:

@@ -134,6 +134,9 @@ class MainWindow(QtGui.QMainWindow):
         return 'CPU使用率：%d%%   内存使用率：%d%%' % (cpuPercent, memoryPercent)        
         
     #----------------------------------------------------------------------
+    def connect(self, gatewayName):
+        self.mainEngine.connect(gatewayName)
+    
     def addConnectAction(self, menu, gatewayName, displayName=''):
         """增加连接功能"""
         if gatewayName not in self.mainEngine.getAllGatewayNames():
@@ -278,16 +281,12 @@ class AboutWidget(QtGui.QDialog):
     #----------------------------------------------------------------------
     def initUi(self):
         """"""
-        self.setWindowTitle('关于VnTrader')
+        self.setWindowTitle('关于PyTrader')
 
         text = """
-            Developed by Traders, for Traders.
+            PyTrader, forked from vn.py.
 
-            License：MIT
-            
-            Website：www.vnpy.org
-
-            Github：www.github.com/vnpy/vnpy
+            License: MIT
             
             """
 
